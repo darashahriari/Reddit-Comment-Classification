@@ -1,5 +1,9 @@
 import os
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
@@ -18,4 +22,14 @@ class Helper:
 		plt.suptitle(title)
 	
 	def show(self):
-		plt.show()	
+		plt.show()
+
+	def correlation_heatmap(self, train, y):
+        total = np.append(train,y,axis=1)
+        total = pd.DataFrame(total)
+        total.columns = []
+        correlations = total.corr()
+
+        fig, ax = plt.subplots(figsize=(10,10))
+        sns.heatmap(correlations, annot=True, cmap="YlGnBu")
+        plt.show()	
