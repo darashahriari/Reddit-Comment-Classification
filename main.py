@@ -1,20 +1,39 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import sys
-from helper import Helper
+import numpy as np
+import numpy.linalg
+import numpy.random
+import pandas as pd
+from DataClean import DataClean
+from NaiveBayes import NaiveBayes
+from sklearn.feature_extraction.text import CountVectorizer
 
-if len(sys.argv) != 2:
-	print('Usage: main.py [model: nb/lr/dt]')
-	quit()
+if __name__ == '__main__':
+    # cleaner = DataClean('/Users/Anna/COMP551-Project2/data/reddit_train.csv')
+    # cleaner.read()
+    # cleaner.partition()
+    # cleaner.buildXTrain()
+    # cleaner.buildYTrain(9)
 
-if sys.argv[1] == 'nb' or sys.argv[1] == 'lr' or sys.argv[1] == 'dt':
-	model = sys.argv[1]
-else:
-	print('Please input valid ml model! nb/lr/dt')
-	quit()
+    data = pd.read_csv('/Users/Anna/COMP551-Project2/data/reddit_train.csv')
+    # print(data['comments'])
+    vectorizer = CountVectorizer()
+    train_x = vectorizer.fit_transform(data['comments'])
+    train_y = vectorizer.fit_transform(data['subreddits'])
+    print(len(vectorizer.get_feature_names()))
+    print(train_x.toarray().shape[1])
+    print(train_y.toarray()[1])
+    training_x = train_x.toarray()
+    training_y = train_y.toarray()
+    num_class = len(vectorizer.get_feature_names())
+    num_feature = train_x.toarray().shape[1]
 
-if model == 'nb':
-
-elif model == 'lr':
-
-elif model == 'dt':
-
-
+    model_bayes = NaiveBayes(training_x=training_x,
+                             training_y=training_y,
+                             num_class=num_class,
+                             theta_k=np.full((num_class, 1), 0.0),
+                             theta_j_k=np.full((num_feature, 20), 0.0),
+                             num_feature=num_feature)
+    model_bayes.fit()

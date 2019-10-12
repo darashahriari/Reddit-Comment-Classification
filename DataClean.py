@@ -6,7 +6,8 @@ from nltk.corpus import stopwords
 import nltk
 nltk.download('stopwords')
 import csv
-class DataClean :
+
+class DataClean:
     def __init__(self, filePath):
         self.filePath = filePath
 
@@ -46,9 +47,8 @@ class DataClean :
                 w.writerow(self.uniqueWords)
         print('done unique')
         
-    
     def buildXTrain(self):
-        #initialize the x vectors
+        # initialize the x vectors
         examples = []
         for comment in self.partitionedComments:
             binaryFeatures = np.zeros(len(self.uniqueWords))
@@ -61,7 +61,7 @@ class DataClean :
         df.to_csv(index=False)
 
     def buildYTrain(self, whatAreWeTesting):
-        #allows us to switch from int to subreddit
+        # allows us to switch from int to subreddit
         IntToSubReddit = dict({})
         index = 0
         for subReddit in self.data['subreddits']:
