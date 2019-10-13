@@ -9,6 +9,11 @@ import pandas as pd
 from DataClean import DataClean
 from NaiveBayes import NaiveBayes
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import normalize
+from sklearn import metrics
 
 if __name__ == '__main__':
     # cleaner = DataClean('/Users/Anna/COMP551-Project2/data/reddit_train.csv')
@@ -18,7 +23,6 @@ if __name__ == '__main__':
     # cleaner.buildYTrain(9)
 
     data = pd.read_csv('/Users/Anna/COMP551-Project2/data/reddit_train.csv')
-    # print(data['comments'])
     vectorizer = CountVectorizer()
     train_x = vectorizer.fit_transform(data['comments'])
     train_y = vectorizer.fit_transform(data['subreddits'])
@@ -36,4 +40,4 @@ if __name__ == '__main__':
                              theta_k=np.full((num_class, 1), 0.0),
                              theta_j_k=np.full((num_feature, 20), 0.0),
                              num_feature=num_feature)
-    model_bayes.fit()
+    #model_bayes.fit()
