@@ -5,16 +5,16 @@ import seaborn as sns
 
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, TruncatedSVD, SparsePCA
 
 class Helper:
     def run_pca(self, train, val):
-        scaler = StandardScaler()
+        scaler = StandardScaler(with_mean=False)
         train_std = scaler.fit_transform(train)
         val_std = scaler.fit_transform(val) 
-        pca = PCA(.95)
+        pca = TruncatedSVD(n_components=100)
         pca.fit(train_std)
-        print(pca.n_components_)
+        #print(pca.n_components_)
         train_img = pca.transform(train_std)
         test_img = pca.transform(val_std)
         return train_img, test_img

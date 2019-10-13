@@ -17,6 +17,10 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 from sklearn.multiclass import OneVsRestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import normalize
+from sklearn import metrics
+from sklearn.linear_model import LogisticRegression
 
 if __name__ == '__main__':
     # cleaner = DataClean('/Users/Anna/COMP551-Project2/data/reddit_train.csv')
@@ -27,7 +31,8 @@ if __name__ == '__main__':
     helper = Helper()
     data = pd.read_csv('reddit_train.csv')
     # print(data['comments'])
-    vectorizer = TfidfVectorizer(max_features = 10000, stop_words = stopwords.words('english'))
+    vectorizer = TfidfVectorizer(max_features = 4000, stop_words = stopwords.words('english'))
+
     train_x = vectorizer.fit_transform(data['comments'])
     train_y = vectorizer.fit_transform(data['subreddits'])
     print(len(vectorizer.get_feature_names()))
@@ -38,7 +43,7 @@ if __name__ == '__main__':
     num_class = len(vectorizer.get_feature_names())
     num_feature = train_x.toarray().shape[1]
     X_train, X_test, y_train, y_test = train_test_split(training_x, training_y, test_size=0.33, random_state=42)
-    X_train, X_test = helper.run_pca(X_train,X_test)
+    #X_train, X_test = helper.run_pca(X_train,X_test)
 
     model_bayes = NaiveBayes(training_x=X_train,
                              training_y=y_train,
@@ -47,5 +52,3 @@ if __name__ == '__main__':
                              theta_j_k=np.full((num_feature, 20), 0.0),
                              num_feature=num_feature)
     model_bayes.fit()
-    y_pred = model_bayes.predict(X_test)
-    print(accuracy_score(y_test, y_pred))
