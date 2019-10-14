@@ -11,6 +11,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 from sklearn import metrics
 from sklearn import tree
+from sklearn.model_selection import cross_val_score
+from sklearn.tree import DecisionTreeClassifier
 
 if __name__ == '__main__':
     # import data
@@ -37,7 +39,7 @@ if __name__ == '__main__':
     test_x_normalize = normalize(test_x_idf)
 
     # try decision tree model
-    clf = tree.DecisionTreeClassifier()
+    clf = DecisionTreeClassifier(random_state=0)
     clf.fit(train_x_normalize, train_y)
 
     # predict
@@ -47,6 +49,7 @@ if __name__ == '__main__':
     # evaluation
     print(metrics.accuracy_score(test_y, clf_pred))
     print(metrics.classification_report(test_y, clf_pred))
+    print(cross_val_score(clf, train_x_normalize, train_y, cv=10))
 
     # plot
     # tree.plot_tree(clf.fit(training_x, train_y))
