@@ -12,7 +12,7 @@ class Helper:
         scaler = StandardScaler(with_mean=False)
         train_std = scaler.fit_transform(train)
         val_std = scaler.fit_transform(val) 
-        pca = TruncatedSVD(n_components=100)
+        pca = TruncatedSVD(n_components=1000)
         pca.fit(train_std)
         #print(pca.n_components_)
         train_img = pca.transform(train_std)
