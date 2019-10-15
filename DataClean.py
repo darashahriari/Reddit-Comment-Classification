@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression,SGDClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import LinearSVC
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -63,7 +63,7 @@ class DataClean :
         
         #print(documents)
         
-        vectorizer = TfidfVectorizer(sublinear_tf=True, norm='l2', encoding='latin-1', ngram_range=(1, 2), min_df=2, max_df=0.03, stop_words='english')
+        vectorizer = TfidfVectorizer(min_df=2, max_df=0.03, stop_words='english')
         X = vectorizer.fit_transform(documents).toarray()
         self.vocabulary = vectorizer.get_feature_names()
         self.xtrain = X
@@ -106,9 +106,10 @@ class DataClean :
 
     def fitTest(self):
         self.xtrain, self.xtest, self.ytrain, self.ytest = train_test_split(self.xtrain, self.ytrain, test_size=0.2, random_state=0)
-        self.classifier = MultinomialNB()
+        #self.classifier = MultinomialNB()
         #self.classifier = LogisticRegression(random_state=0, solver='newton-cg', multi_class='multinomial')
         #self.classifier = LinearSVC(random_state=0, tol=1e-5)
+        self.classifier = SGDClassifier(max_iter=1000, tol=1e-3)
         self.classifier.fit(self.xtrain, self.ytrain) 
 
     def predTest(self):

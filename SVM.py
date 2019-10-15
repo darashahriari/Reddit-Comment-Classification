@@ -13,7 +13,7 @@ nltk.download('wordnet')
 #from DataClean import DataClean
 from NaiveBayes import NaiveBayes
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression,SGDClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
@@ -71,7 +71,8 @@ if __name__ == '__main__':
     # SVM
     #train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X,y, train_size=0.8,
      #                                                               test_size=0.2)
-    clf = LinearSVC(random_state=0, tol=1e-5)
+    #clf = LinearSVC(random_state=0, tol=1e-5)
+    clf =SGDClassifier(max_iter=1000, tol=1e-3) 
     clf.fit(train_x_normalize, train_y)
 
     # predict

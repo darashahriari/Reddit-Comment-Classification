@@ -6,7 +6,7 @@ import pandas as pd
 #from DataClean import DataClean
 from NaiveBayes import NaiveBayes
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression,SGDClassifier
 from mlxtend.classifier import StackingClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC, SVC
@@ -59,17 +59,23 @@ if __name__ == '__main__':
     #                                                                test_size=0.2)
 
     # logistic regression
-    svc = LinearSVC(random_state=0, tol=1e-5)
+    lr = LogisticRegression(random_state=0, solver='newton-cg', multi_class='multinomial')
     clf1 = LogisticRegression(random_state=0, solver='newton-cg', multi_class='multinomial')
     clf2 = MultinomialNB()
-    sclf = StackingClassifier(classifiers=[clf1, clf2],
+    clf3 = SGDClassifier(loss='log', max_iter=1000, tol=1e-3)
+    sclf = StackingClassifier(classifiers=[clf1, clf2, clf3],
                           use_probas=True,
                           average_probas=False,
-                          meta_classifier=svc)
-    for clf, label in zip([clf1, clf2, sclf], 
+                          meta_classifier=lr)
+    for clf, label in zip([clf1, clf2, clf3, sclf], 
                       ['LR', 
-                       'MLNB', 
+                       'MLNB',
+                       'svm',
                        'StackingClassifier']):
+        '''clf.fit(train_x_normalize, train_y)
+        clf_pred = clf.predict(test_x_normalize)
+        print(metrics.accuracy_score(test_y, clf_pred))
+        print(metrics.classification_report(test_y, clf_pred))'''
         scores = model_selection.cross_val_score(clf, X, y, cv=3, scoring='accuracy')
         print("Accuracy: %0.2f (+/- %0.2f) [%s]" 
             % (scores.mean(), scores.std(), label))
