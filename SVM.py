@@ -50,7 +50,7 @@ if __name__ == '__main__':
     print(training_x)'''
 
     # tf idf
-    tf_idf = TfidfVectorizer(sublinear_tf=True, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 2), stop_words='english')
+    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df = 0.75, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 2), stop_words='english')
     train_x_idf = tf_idf.fit_transform(train_x)
     test_x_idf = tf_idf.transform(test_x)
     X = tf_idf.transform(X)
@@ -69,8 +69,8 @@ if __name__ == '__main__':
     print('Original feature number:', train_x_normalize.shape[1]) 
     print('Reduced feature number:', X_kbest_features.shape[1])
     # SVM
-    train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X,y, train_size=0.8,
-                                                                    test_size=0.2)
+    #train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X,y, train_size=0.8,
+     #                                                               test_size=0.2)
     clf = LinearSVC(random_state=0, tol=1e-5)
     clf.fit(train_x_normalize, train_y)
 
