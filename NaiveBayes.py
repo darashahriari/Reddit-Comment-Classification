@@ -33,26 +33,21 @@ class NaiveBayes(object):
         pred_y = ["" for x in range(len(validation_x))]
         i = 0
         for x in validation_x:
-            class_prob = -10000000000
+            # class_prob = -100000000000
+            class_prob = []
             for k in range(self.num_class):
                 feature_likelihood = 0
                 for j in range(self.num_feature):
                     feature_likelihood += x[j] * np.log(self.theta_j_k[j][k]) + \
                                           (1 - x[j]) * np.log(1 - self.theta_j_k[j][k])
-                class_pnow = feature_likelihood + np.log(self.theta_k[k])
-                if class_pnow > class_prob:
-                    class_prob = class_pnow
-                    pred_y[i] = feature_name[k]
+                # class_pnow = feature_likelihood + np.log(self.theta_k[k])
+                # if class_pnow > class_prob:
+                #     class_prob = class_pnow
+                #     pred_y[i] = feature_name[k]
+                class_prob.append(feature_likelihood + np.log(self.theta_k[k]))
+            pred_y[i] = feature_name[np.argmax(class_prob)]
+
             print(i, pred_y[i])
             i += 1
         return pred_y
 
-        # class_prob = []
-        # for k in range(self.num_class):
-        #     feature_likelihood = 0
-        #     for j in range(self.num_feature):
-        #         feature_likelihood += \
-        #             validation_x[j] * np.log(self.theta_j_k[j][k]) + (1 - validation_x[j]) * np.log(
-        #                 1 - self.theta_j_k[j][k])
-        #         class_prob = feature_likelihood + np.log(self.theta_k[k])
-        # return np.argmax(class_prob)

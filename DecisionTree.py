@@ -13,6 +13,9 @@ from sklearn import metrics
 from sklearn import tree
 from sklearn.model_selection import cross_val_score
 from sklearn.tree import DecisionTreeClassifier
+from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
 
 if __name__ == '__main__':
     # import data
@@ -29,7 +32,7 @@ if __name__ == '__main__':
     print(training_x)
 
     # tf idf
-    tf_idf = TfidfVectorizer()
+    tf_idf = TfidfVectorizer(stop_words=stopwords.words('english'))
     train_x_idf = tf_idf.fit_transform(train_x)
     test_x_idf = tf_idf.transform(test_x)
     print(train_x[1:2])
@@ -40,16 +43,16 @@ if __name__ == '__main__':
 
     # try decision tree model
     clf = DecisionTreeClassifier(random_state=0)
-    clf.fit(train_x_normalize, train_y)
+    clf.fit(train_x_idf, train_y)
 
     # predict
-    clf_pred = clf.predict(test_x_normalize)
+    clf_pred = clf.predict(test_x_idf)
     print(clf_pred)
 
     # evaluation
     print(metrics.accuracy_score(test_y, clf_pred))
     print(metrics.classification_report(test_y, clf_pred))
-    print(cross_val_score(clf, train_x_normalize, train_y, cv=10))
+    # print(cross_val_score(clf, train_x_normalize, train_y, cv=10))
 
     # plot
     # tree.plot_tree(clf.fit(training_x, train_y))

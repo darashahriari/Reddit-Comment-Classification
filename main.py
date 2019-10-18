@@ -40,7 +40,7 @@ if __name__ == '__main__':
     print(train_x)
     print(train_y)
     # pre
-    vectorizer = CountVectorizer(max_features=1000, binary=True)
+    vectorizer = CountVectorizer(binary=True)
     training_x = vectorizer.fit_transform(train_x)
     # print(vectorizer.vocabulary_)
     print(len(vectorizer.get_feature_names()))
@@ -48,6 +48,7 @@ if __name__ == '__main__':
     print(len(vectorizer.get_feature_names()))
     print(training_x.shape)  # number of feature
 
+    testing_x = vectorizer.transform(test_x).toarray()
     training_y = vectorizer.fit_transform(train_y)
     num_class = 20
     num_sample = len(train_x)
@@ -55,18 +56,19 @@ if __name__ == '__main__':
     print(feature_name[0])
     print(len(vectorizer.get_feature_names()))
 
-    testing_x = vectorizer.fit_transform(test_x).toarray()
+    # testing_x = vectorizer.fit_transform(test_x).toarray()
     # testing_y = vectorizer.transform(test_y)
     print(test_x.shape[0])
     print(testing_x[1][6])
+    print(feature_name)
     # print(testing_x)
     # print(testing_y)
 
     # # tf idf
-    # tf_idf = TfidfVectorizer(max_features=1000, binary=True)
+    # tf_idf = TfidfVectorizer(max_features=5000, binary=True)
     # train_x_idf = tf_idf.fit_transform(train_x)
     # num_feature = len(tf_idf.get_feature_names())
-    # train_y_idf = tf_idf.fit_transform(train_y).toarray()
+    # train_y_idf = tf_idf.fit_transform(train_y)
     # num_class = 20
     # num_sample = len(train_x)
     # feature_name = tf_idf.get_feature_names()
@@ -85,11 +87,12 @@ if __name__ == '__main__':
                              training_y=training_y,
                              num_class=num_class,
                              theta_k=np.full((num_class, 1), 0.0),
-                             theta_j_k=np.full((num_feature, 20), 0.0),
+                             theta_j_k=np.full((num_feature, num_class), 0.0),
                              num_feature=num_feature,
                              num_sample=num_sample)
     model_bayes.fit()
-    pred_y = model_bayes.predict(testing_x[1:50], feature_name)
+    pred_y = model_bayes.predict(testing_x[1:100], feature_name)
     print(pred_y)
-    print(metrics.accuracy_score(test_y[1:50], pred_y))
-    print(metrics.classification_report(test_y[1:50], pred_y))
+    print(test_y[1:100])
+    print(metrics.accuracy_score(test_y[1:100], pred_y))
+    print(metrics.classification_report(test_y[1:100], pred_y))

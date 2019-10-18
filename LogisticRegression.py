@@ -14,7 +14,9 @@ from sklearn import metrics
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
-
+from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
 
 if __name__ == '__main__':
     # import data
@@ -28,13 +30,13 @@ if __name__ == '__main__':
     print(data['comments'][1])
 
     # pre
-    # vectorizer = CountVectorizer(max_features=13000)
-    # training_x = vectorizer.fit_transform(train_x)
-    # testing_x = vectorizer.transform(test_x)
-    # training_y = vectorizer.fit_transform(train_y)
-    # testing_y = vectorizer.transform(test_y)
-    # print(training_x)
-    #
+    vectorizer = CountVectorizer(max_features=13000, stop_words=stopwords.words('english'))
+    training_x = vectorizer.fit_transform(train_x)
+    testing_x = vectorizer.transform(test_x)
+    training_y = vectorizer.fit_transform(train_y)
+    testing_y = vectorizer.transform(test_y)
+    print(training_x)
+
     # # # for test:
     # # t_x, te_x, t_y, te_y = train_test_split(data['comments'], data['subreddits'], train_size=1,
     # #                                                     test_size=0)
@@ -44,7 +46,7 @@ if __name__ == '__main__':
     # # final_test_x = vectorizer.transform(test_data['comments'])
     #
     # tf idf
-    tf_idf = TfidfVectorizer()
+    tf_idf = TfidfVectorizer(stop_words=stopwords.words('english'))
     train_x_idf = tf_idf.fit_transform(train_x)
     test_x_idf = tf_idf.transform(test_x)
     train_y_idf = tf_idf.fit_transform(train_y)
@@ -58,10 +60,10 @@ if __name__ == '__main__':
     # test_y_normalize = normalize(test_y_idf)
 
     # logistic regression
-    # clf = LogisticRegression(solver='lbfgs', multi_class='auto')
+    clf = LogisticRegression(solver='lbfgs', multi_class='auto')
     # lbfgs
     # clf = BernoulliNB()
-    clf = MLPClassifier(solver='lbfgs', alpha=1e-5, random_state = 1)
+    # clf = MLPClassifier(solver='lbfgs', alpha=1e-5, random_state=1)
     # clf = KNeighborsClassifier()
     clf.fit(train_x_idf, train_y)
 
@@ -75,8 +77,3 @@ if __name__ == '__main__':
     # evaluation
     print(metrics.accuracy_score(test_y, clf_pred))
     print(metrics.classification_report(test_y, clf_pred))
-
-
-
-
-
