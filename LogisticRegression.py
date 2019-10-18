@@ -14,9 +14,8 @@ if __name__ == '__main__':
     x = data['comments']
     y = data['subreddits']
 
-
     #tf_idf
-    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.75, min_df=3, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words=stopwords.words('english'))
+    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.75, min_df=3, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words='english')
     x = tf_idf.fit_transform(x)
 
     # normalize
@@ -38,6 +37,6 @@ if __name__ == '__main__':
     clf_pred = clf.predict(test_x)
     print(clf_pred)
 
-    # evaluation
+    # evaluation on testt set
     print(metrics.accuracy_score(test_y, clf_pred))
     print(metrics.classification_report(test_y, clf_pred))
