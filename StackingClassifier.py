@@ -17,6 +17,8 @@ from helper import Helper
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn import model_selection
+from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 if __name__ == '__main__':
     # import data

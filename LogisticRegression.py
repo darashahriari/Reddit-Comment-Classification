@@ -48,7 +48,7 @@ if __name__ == '__main__':
     print(training_x)'''
 
     # tf idf
-    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df = 0.75, min_df=5, norm='l2',encoding='latin-1', ngram_range=(1, 2),stop_words='english')
+    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.75, min_df=5, norm='l2', encoding='latin-1', ngram_range=(1, 2), stop_words='english')
     train_x_idf = tf_idf.fit_transform(train_x)
     test_x_idf = tf_idf.transform(test_x)
     X = tf_idf.transform(X)
