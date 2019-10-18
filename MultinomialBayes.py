@@ -1,7 +1,9 @@
+import os
 import numpy as np
 import pandas as pd
 import re
 import nltk
+import time
 from sklearn.datasets import load_files
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -18,9 +20,8 @@ from sklearn import linear_model
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
-from sklearn.linear_model import SGDClassifier
 
-class DataClean :
+class MultinomialBayes :
     def __init__(self, filePath):
         self.filePath = filePath
 
@@ -106,27 +107,23 @@ class DataClean :
 
         predictions = self.text_clf.predict(self.xtest)
         df = pd.DataFrame({'Category': predictions})
-        df.to_csv(index=True, path_or_buf='/Users/dara/desktop/mini project 2/ans.csv')
+        df.to_csv(index=True, path_or_buf='ans.csv')
 
     def fitTest(self):
         self.xtrain, self.xtest, self.ytrain, self.ytest = train_test_split(self.xtrain, self.ytrain, test_size=0.2, random_state=0)
-        #self.gs_clf = GridSearchCV(self.text_clf, self.parameters, cv=5, iid=False, n_jobs=-1)
-        #self.gs_clf.fit(self.xtrain, self.ytrain)
-        self.text_clf.fit(self.xtrain, self.ytrain)
-        #self.classifier = MultinomialNB()
-        #self.classifier.fit(self.xtrain, self.ytrain) 
+        start_time = time.time()
+        self.text_clf.fit(self.xtrain, self.ytrain) 
+        print("--- %s runtime in seconds ---" % (time.time() - start_time))
 
     def predTest(self):
-        #self.ypred = self.gs_clf.predict(self.xtest)
         self.ypred =  self.text_clf.predict(self.xtest)
-        #self.ypred = self.classifier.predict(self.xtest)
         print(classification_report(self.ytest,self.ypred))
         print(accuracy_score(self.ytest, self.ypred))
         
-cleaner = DataClean("/Users/dara/desktop/mini project 2/reddit_train.csv")
+cleaner = MultinomialBayes("data/reddit_train.csv")
 cleaner.read()
 cleaner.featureSelect()
 cleaner.fitTest()
 cleaner.predTest()
 #cleaner.fit()
-#cleaner.pred("/Users/dara/desktop/mini project 2/reddit_test 2.csv")
+#cleaner.pred("data/reddit_test 2.csv")
