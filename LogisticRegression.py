@@ -34,8 +34,6 @@ if __name__ == '__main__':
     training_x = vectorizer.fit_transform(train_x)
     testing_x = vectorizer.transform(test_x)
     training_y = vectorizer.fit_transform(train_y)
-    testing_y = vectorizer.transform(test_y)
-    print(training_x)
 
     # # # for test:
     # # t_x, te_x, t_y, te_y = train_test_split(data['comments'], data['subreddits'], train_size=1,
