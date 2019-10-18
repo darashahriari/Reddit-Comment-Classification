@@ -1,68 +1,132 @@
 import numpy as np
 import pandas as pd
 import re
+import nltk
+from sklearn.datasets import load_files
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import LinearSVC
+from sklearn.feature_extraction.text import TfidfVectorizer
+import string
+from sklearn import linear_model
+from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import SGDClassifier
 
-
-class DataClean:
+class DataClean :
     def __init__(self, filePath):
         self.filePath = filePath
 
     def read(self):
-        # Read data from file 'filename.csv'
-        # (in the same directory that your python process is based)
-        # Control delimiters, rows, column names with read_csv (see later)
-        self.data = pd.read_csv(self.filePath)
+        print('\n \n \n Reading File ...')
 
-    def partition(self):
-        # Takes the comments and parses them into an array of words
-        partitionedComments = []
-        for comment in self.data['comments']:
-            partitionedComments.append(re.split('\W', comment))
+        data = pd.read_csv(self.filePath)
 
-            # filters out all redundant words in all comments
-        uniqueWords = dict({})
-        index = 0
-        for comment in partitionedComments:
-            for word in comment:
-                if not word.lower() in uniqueWords.keys():
-                    uniqueWords[word.lower()] = index
-                    index += 1
+        print('Cleaning Text ...')
 
-        self.partitionedComments = partitionedComments
-        self.uniqueWords = uniqueWords
+        self.y = data['subreddits']
+        X = data['comments']
+        stemmer = WordNetLemmatizer()
+        documents = []
+        for sen in range(0, len(X)):
+            # Remove all the special characters
+            document = re.sub(r'\W', ' ', str(X[sen]))
+            # remove all single characters
+            document = re.sub(r'\s+[a-zA-Z]\s+', ' ', document)
+            # Remove single characters from the start
+            document = re.sub(r'\^[a-zA-Z]\s+', ' ', document) 
+            # Substituting multiple spaces with single space
+            document = re.sub(r'\s+', ' ', document, flags=re.I)
+            # Removing prefixed 'b'
+            document = re.sub(r'^b\s+', '', document)
+            # Converting to Lowercase
+            document = document.lower()
+            # Lemmatization
+            document = document.split()
+            document = [stemmer.lemmatize(word) for word in document]
+            document = ' '.join(document)
+            documents.append(document)
+            
+        self.X = documents
 
-    def buildXTrain(self):
-        # initialize the x vectors
-        examples = []
-        for comment in self.partitionedComments:
-            binaryFeatures = np.zeros(len(self.uniqueWords))
-            for word in comment:
-                if word.lower() in self.uniqueWords.keys():
-                    binaryFeatures[self.uniqueWords[word.lower()]] = 1
-            examples.append(binaryFeatures)
-        self.xTrain = np.asarray(examples)
+    def featureSelect(self):
 
-    def buildYTrain(self, whatAreWeTesting):
-        # allows us to switch from int to subreddit
-        IntToSubReddit = dict({})
-        index = 0
-        for subReddit in self.data['subreddits']:
-            if not subReddit in IntToSubReddit.values():
-                IntToSubReddit[index] = subReddit
-                index += 1
+        print('Selecting Features ...')
+        
+        self.tfidf_vectorizer = TfidfVectorizer(min_df=2, max_df=0.03, stop_words='english')
 
-        self.IntToSubReddit = IntToSubReddit
+        X = self.tfidf_vectorizer.fit_transform(self.X)
 
-        # given input of an integer we output a vector that determines whether its corresponding subreddit is expected
-        subReddit = self.IntToSubReddit[whatAreWeTesting]
+        self.xtrain = X
+        self.ytrain = self.y
 
-        yTrain = np.zeros(len(self.data['subreddits']))
-        for index in range(len(self.data['subreddits'])):
-            if self.data['subreddits'][index] == subReddit:
-                yTrain[index] = 1
-            else:
-                yTrain[index] = 0
-        self.yTrain = yTrain
-        print(yTrain)
+        print('Feature Selection Complete:')
+        print('Starting Taining ...\n \n')
+        
+        self.text_clf = Pipeline([('tfidf', TfidfTransformer()),('clf', MultinomialNB(alpha=.83,fit_prior=True, class_prior=[.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05,.05])),]) 
+        
 
+    def fit(self):
+        self.text_clf.fit(self.xtrain, self.ytrain)
 
+    def pred(self, filepath):
+        testData = pd.read_csv(filepath)
+        X = testData['comments']
+        stemmer = WordNetLemmatizer()
+        documents = []
+        for sen in range(0, len(X)):
+            # Remove all the special characters
+            document = re.sub(r'\W', ' ', str(X[sen]))
+            # remove all single characters
+            document = re.sub(r'\s+[a-zA-Z]\s+', ' ', document)
+            # Remove single characters from the start
+            document = re.sub(r'\^[a-zA-Z]\s+', ' ', document) 
+            # Substituting multiple spaces with single space
+            document = re.sub(r'\s+', ' ', document, flags=re.I)
+            # Removing prefixed 'b'
+            document = re.sub(r'^b\s+', '', document)
+            # Converting to Lowercase
+            document = document.lower()
+            # Lemmatization
+            document = document.split()
+            document = [stemmer.lemmatize(word) for word in document]
+            document = ' '.join(document)
+            documents.append(document)
+        
+        X = self.tfidf_vectorizer.transform(documents)
+
+        self.xtest = X
+
+        predictions = self.text_clf.predict(self.xtest)
+        df = pd.DataFrame({'Category': predictions})
+        df.to_csv(index=True, path_or_buf='/Users/dara/desktop/mini project 2/ans.csv')
+
+    def fitTest(self):
+        self.xtrain, self.xtest, self.ytrain, self.ytest = train_test_split(self.xtrain, self.ytrain, test_size=0.2, random_state=0)
+        #self.gs_clf = GridSearchCV(self.text_clf, self.parameters, cv=5, iid=False, n_jobs=-1)
+        #self.gs_clf.fit(self.xtrain, self.ytrain)
+        self.text_clf.fit(self.xtrain, self.ytrain)
+        #self.classifier = MultinomialNB()
+        #self.classifier.fit(self.xtrain, self.ytrain) 
+
+    def predTest(self):
+        #self.ypred = self.gs_clf.predict(self.xtest)
+        self.ypred =  self.text_clf.predict(self.xtest)
+        #self.ypred = self.classifier.predict(self.xtest)
+        print(classification_report(self.ytest,self.ypred))
+        print(accuracy_score(self.ytest, self.ypred))
+        
+cleaner = DataClean("/Users/dara/desktop/mini project 2/reddit_train.csv")
+cleaner.read()
+cleaner.featureSelect()
+cleaner.fitTest()
+cleaner.predTest()
+#cleaner.fit()
+#cleaner.pred("/Users/dara/desktop/mini project 2/reddit_test 2.csv")
