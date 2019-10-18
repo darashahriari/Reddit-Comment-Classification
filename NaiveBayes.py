@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-import sys
 import numpy as np
-import numpy.linalg
 
 
 class NaiveBayes(object):
@@ -40,10 +38,6 @@ class NaiveBayes(object):
                 for j in range(self.num_feature):
                     feature_likelihood += x[j] * np.log(self.theta_j_k[j][k]) + \
                                           (1 - x[j]) * np.log(1 - self.theta_j_k[j][k])
-                # class_pnow = feature_likelihood + np.log(self.theta_k[k])
-                # if class_pnow > class_prob:
-                #     class_prob = class_pnow
-                #     pred_y[i] = feature_name[k]
                 class_prob.append(feature_likelihood + np.log(self.theta_k[k]))
             pred_y[i] = feature_name[np.argmax(class_prob)]
 
