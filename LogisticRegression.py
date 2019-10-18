@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
@@ -15,7 +16,7 @@ if __name__ == '__main__':
 
 
     #tf_idf
-    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.03, min_df=3, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words=stopwords.words('english'))
+    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.75, min_df=3, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words=stopwords.words('english'))
     x = tf_idf.fit_transform(x)
 
     # normalize
@@ -27,7 +28,11 @@ if __name__ == '__main__':
     # logistic regression
     print("start model!")
     clf = LogisticRegression(solver='lbfgs', multi_class='auto')
+    import time
+    start_time = time.time()
     clf.fit(train_x, train_y)
+    end = time.time()
+    print("time = ", end-start_time)
 
     # predict
     clf_pred = clf.predict(test_x)
