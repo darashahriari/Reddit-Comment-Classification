@@ -16,11 +16,17 @@ from sklearn.feature_selection import chi2
 from sklearn import model_selection
 from sklearn.neural_network import MLPClassifier
 import time
+from helper import Helper
+
 
 if __name__ == '__main__':
+
+    #helper functions
+    helper = Helper()
+
     # import data
-    data = pd.read_csv('reddit_train.csv')
-    val = pd.read_csv('reddit_test.csv')
+    data = pd.read_csv('data/reddit_train.csv')
+    val = pd.read_csv('data/reddit_test.csv')
     
     # split data into train and test sets
     val_x = val['comments']
@@ -41,11 +47,11 @@ if __name__ == '__main__':
     X_kbest_features = chi2_features.fit_transform(X,y)
     val_kbest_features = chi2_features.transform(val_x)
 
-    train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X_kbest_features,y, train_size=0.8,
+    train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X,y, train_size=0.8,
                                                                     test_size=0.2)    
 
     #initialize classifiers
-    clf1 = LogisticRegression(random_state=0, solver='newton-cg', multi_class='multinomial')
+    clf1 = LogisticRegression(solver='lbfgs', multi_class='auto',max_iter=500)
     clf2 = MultinomialNB()
     clf3 = SGDClassifier(loss='modified_huber', max_iter=1000, tol=1e-3)
     sclf = StackingClassifier(classifiers=[clf2, clf3],
@@ -59,20 +65,29 @@ if __name__ == '__main__':
                        'nb',
                        'svm',
                        'StackingClassifier']):
-        scores = model_selection.cross_val_score(clf,X_kbest_features , y, cv=5, scoring='accuracy')
+        scores = model_selection.cross_val_score(clf,train_x_normalize , train_y, cv=5, scoring='accuracy')
         print("Accuracy: %0.4f (+/- %0.4f) [%s]" % (scores.mean(), scores.std(), classifier))
     
     #fit training data
     start_time = time.time()
-    sclf.fit(X_kbest_features, y)
+    sclf.fit(train_x_normalize, train_y)
     print("--- %s runtime in seconds ---" % (time.time() - start_time))
 
     #predict validation classes
-    val_pred = sclf.predict(val_kbest_features)
+
+    clf_pred = clf.predict(test_x_normalize)
+    sclf_pred = sclf.predict(test_x_normalize)
+    val_pred = sclf.predict(val_x)
 
     #write to validation file
-    df = pd.DataFrame({'Category': val_pred})
-    df.to_csv(index=True, path_or_buf='validation_stacking.csv', index_label='Id')
+    helper.generate_prediction_csv(val_pred)
+
+    # evaluation on testt set
+
+    print(metrics.classification_report(test_y, sclf_pred))
+    print(metrics.accuracy_score(test_y, sclf_pred))
+
+
 
 
 

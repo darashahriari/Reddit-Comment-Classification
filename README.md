@@ -1,16 +1,16 @@
 # COMP551-Project2
 
-Running Bernouli Naive Bayes:
+Running Bernouli Naive Bayes:  
 $python bayesMain.py
 
-Running Multinomial Naive Bayes:
+Running Multinomial Naive Bayes:  
 $python MultionomialBayes.py
 
-Running SVM:
+Running SVM:  
 $python SVM.py
 
-Running Logistic Regression:
+Running Logistic Regression:  
 $python LogisticRegressiong.py
 
-Running Stacking Classifier:
+Running Stacking Classifier:  
 $python StackingClassifier.py

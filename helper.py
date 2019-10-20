@@ -8,15 +8,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA, TruncatedSVD, SparsePCA
 
 class Helper:
-    def run_pca(self, train, val):
+    def run_lsa(self, X_train):
         scaler = StandardScaler(with_mean=False)
-        train_std = scaler.fit_transform(train)
-        val_std = scaler.fit_transform(val) 
-        pca = TruncatedSVD(n_components=100)
-        pca.fit(train_std)
-        train_img = pca.transform(train_std)
-        test_img = pca.transform(val_std)
-        return train_img, test_img
+        train_std = scaler.fit_transform(X_train)
+        lsa = TruncatedSVD(n_iter=100, n_components=100)
+        lsa.fit(train_std)
+        return lsa
 
     def plot(self, x, y, x_label, y_label, title):
         plt.figure()
@@ -37,3 +34,7 @@ class Helper:
         fig, ax = plt.subplots(figsize=(10,10))
         sns.heatmap(correlations, annot=True, cmap="YlGnBu")
         plt.show()  
+
+    def generate_prediction_csv(self, pred):
+        df = pd.DataFrame({'Category': pred})
+        df.to_csv(index=True, path_or_buf='validation.csv', index_label='Id')

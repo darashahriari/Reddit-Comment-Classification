@@ -78,6 +78,8 @@ class MultinomialBayes :
         self.text_clf.fit(self.xtrain, self.ytrain)
 
     def pred(self, filepath):
+        #helper functions
+        helper = Helper()
         testData = pd.read_csv(filepath)
         X = testData['comments']
         stemmer = WordNetLemmatizer()
@@ -106,8 +108,7 @@ class MultinomialBayes :
         self.xtest = X
 
         predictions = self.text_clf.predict(self.xtest)
-        df = pd.DataFrame({'Category': predictions})
-        df.to_csv(index=True, path_or_buf='ans.csv')
+        helper.generate_prediction_csv(predictions)
 
     def fitTest(self):
         self.xtrain, self.xtest, self.ytrain, self.ytest = train_test_split(self.xtrain, self.ytrain, test_size=0.2, random_state=0)

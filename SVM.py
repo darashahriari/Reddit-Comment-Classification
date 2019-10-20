@@ -14,11 +14,16 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2 
 from sklearn import model_selection
 import time
+from helper import Helper
 
 if __name__ == '__main__':
+
+    #helper functions
+    helper = Helper()
+
     # import data
-    data = pd.read_csv('reddit_train.csv')
-    val = pd.read_csv('reddit_test.csv')
+    data = pd.read_csv('data/reddit_train.csv')
+    val = pd.read_csv('data/reddit_test.csv')
 
     # store data in 
     val_x = val['comments']
@@ -41,6 +46,10 @@ if __name__ == '__main__':
 
     train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X_kbest_features, y, train_size=0.8,
                                                                     test_size=0.2)
+    lsa = helper.run_lsa(train_x_normalize)
+    train_x_normalize = lsa.transform(train_x_normalize)
+    test_x_normalize = lsa.transform(test_x_normalize)
+    val_kbest_features = lsa.transform(val_kbest_features)
     
     clf = SGDClassifier(loss='modified_huber',random_state=42, max_iter=3000, tol=1e-3, n_jobs=1)
     
@@ -55,10 +64,10 @@ if __name__ == '__main__':
     val_pred = clf.predict(val_kbest_features)
 
     #write to validation file
-    df = pd.DataFrame({'Category': val_pred})
-    df.to_csv(index=True, path_or_buf='validation.csv', index_label='Id')
+    helper.generate_prediction_csv(val_pred)
 
     # evaluation on testt set
-    print(metrics.accuracy_score(test_y, clf_pred))
     print(metrics.classification_report(test_y, clf_pred))
+    print(metrics.accuracy_score(test_y, clf_pred))
+
 

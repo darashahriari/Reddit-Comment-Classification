@@ -2,13 +2,14 @@
 # coding: utf-8
 import numpy as np
 import pandas as pd
+import time
 from NaiveBayes import NaiveBayes
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
 if __name__ == '__main__':
-    data = pd.read_csv('reddit_train.csv')
+    data = pd.read_csv('data/reddit_train.csv')
     train_x, test_x, train_y, test_y = train_test_split(data['comments'], data['subreddits'], train_size=0.8,
                                                         test_size=0.2, random_state=0)
     print(len(train_x))
@@ -41,7 +42,11 @@ if __name__ == '__main__':
                              theta_j_k=np.full((num_feature, num_class), 0.0),
                              num_feature=num_feature,
                              num_sample=num_sample)
+    
+    start_time = time.time()
     model_bayes.fit()
+    print("--- %s runtime in seconds ---" % (time.time() - start_time))
+
     pred_y = model_bayes.predict(testing_x[1:100], feature_name)
     print(pred_y)
     print(test_y[1:100])
