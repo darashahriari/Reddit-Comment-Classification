@@ -11,7 +11,7 @@ class Helper:
     def run_lsa(self, X_train):
         scaler = StandardScaler(with_mean=False)
         train_std = scaler.fit_transform(X_train)
-        lsa = TruncatedSVD(n_iter=100, n_components=100)
+        lsa = TruncatedSVD(n_iter=100, n_components=10000)
         lsa.fit(train_std)
         return lsa
 
