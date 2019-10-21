@@ -34,7 +34,7 @@ if __name__ == '__main__':
     y = data['subreddits']
 
     # tf idf
-    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df = 0.03, min_df=2, norm='l2',encoding='latin-1', ngram_range=(1, 2),stop_words='english')
+    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df = 0.02, min_df=2, norm='l2',encoding='latin-1', ngram_range=(1, 2),stop_words='english')
     X = tf_idf.fit_transform(X)
     val_x = tf_idf.transform(val_x)
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     X_kbest_features = chi2_features.fit_transform(X,y)
     val_kbest_features = chi2_features.transform(val_x)
 
-    train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X,y, train_size=0.8,
+    train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X_kbest_features,y, train_size=0.8,
                                                                     test_size=0.2)    
 
     #initialize classifiers
@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     clf_pred = clf.predict(test_x_normalize)
     sclf_pred = sclf.predict(test_x_normalize)
-    val_pred = sclf.predict(val_x)
+    val_pred = sclf.predict(val_kbest_features)
 
     #write to validation file
     helper.generate_prediction_csv(val_pred)

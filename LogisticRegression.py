@@ -22,7 +22,7 @@ if __name__ == '__main__':
     val_x = val['comments']
 
     #tf_idf
-    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.75, min_df=3, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words='english')
+    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.05, min_df=2, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words='english')
     x = tf_idf.fit_transform(x)
     val_x = tf_idf.transform(val_x)
 

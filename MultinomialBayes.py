@@ -61,7 +61,7 @@ class MultinomialBayes :
 
         print('Selecting Features ...')
         
-        self.tfidf_vectorizer = TfidfVectorizer(min_df=2, max_df=0.03, stop_words='english')
+        self.tfidf_vectorizer = TfidfVectorizer(min_df=2, max_df=0.05, stop_words='english')
 
         X = self.tfidf_vectorizer.fit_transform(self.X)
 

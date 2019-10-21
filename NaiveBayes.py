@@ -31,7 +31,6 @@ class NaiveBayes(object):
         pred_y = ["" for x in range(len(validation_x))]
         i = 0
         for x in validation_x:
-            # class_prob = -100000000000
             class_prob = []
             for k in range(self.num_class):
                 feature_likelihood = 0

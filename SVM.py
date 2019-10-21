@@ -31,7 +31,7 @@ if __name__ == '__main__':
     y = data['subreddits']
 
     # tf idf
-    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.03, min_df=3, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words='english')
+    tf_idf = TfidfVectorizer(sublinear_tf=True, max_df=0.05, min_df=2, norm='l2', ngram_range=(1, 2), encoding='latin-1', stop_words='english')
     X = tf_idf.fit_transform(X)
     val_x = tf_idf.transform(val_x)
 
@@ -46,12 +46,13 @@ if __name__ == '__main__':
 
     train_x_normalize, test_x_normalize, train_y, test_y = train_test_split(X_kbest_features, y, train_size=0.8,
                                                                     test_size=0.2)
-    lsa = helper.run_lsa(train_x_normalize)
+    #run LSA
+    '''lsa = helper.run_lsa(train_x_normalize)
     train_x_normalize = lsa.transform(train_x_normalize)
     test_x_normalize = lsa.transform(test_x_normalize)
-    val_kbest_features = lsa.transform(val_kbest_features)
+    val_kbest_features = lsa.transform(val_kbest_features)'''
     
-    clf = SGDClassifier(loss='modified_huber',random_state=42, max_iter=3000, tol=1e-3, n_jobs=1)
+    clf = SGDClassifier(loss='modified_huber', max_iter=1000, tol=1e-3)
     
     acc = model_selection.cross_val_score(clf, X_kbest_features, y, cv=5, scoring='accuracy')
     print("accuracy", acc.mean())
