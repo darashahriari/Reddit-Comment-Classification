@@ -1,5 +1,11 @@
 # COMP551-Project2
 
+Setup environment with virtualenv:
+$source env/bin/activate
+
+Install packages:
+$pip install -r requirements.txt
+
 Running Bernouli Naive Bayes:  
 $python bayesMain.py
 

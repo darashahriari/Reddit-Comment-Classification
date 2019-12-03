@@ -4,7 +4,6 @@ import numpy.linalg
 import numpy.random
 import pandas as pd
 from sklearn.linear_model.tests.test_passive_aggressive import random_state
-from preprocess import Preprocess
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
