@@ -1,4 +1,5 @@
 # COMP551-Project2
+# Read writeup.pdf for the report
 
 Setup environment with virtualenv:
 $source env/bin/activate
